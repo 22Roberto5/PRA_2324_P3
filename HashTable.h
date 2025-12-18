@@ -13,11 +13,12 @@ template <typename V>
 class HashTable : public Dict<V> {
 
 private:
-    int n;
-    int max;
+    int n;                      // número de elementos
+    int max;                    // capacidad
     ListLinked<TableEntry<V>>* table;
 
-    int h(std::string key) {
+    // Función hash
+    int h(std::string key) const {
         int sum = 0;
         for (size_t i = 0; i < key.length(); i++) {
             sum += int(key.at(i));
@@ -26,14 +27,17 @@ private:
     }
 
 public:
+    // Constructor
     HashTable(int size) : n(0), max(size) {
         table = new ListLinked<TableEntry<V>>[max];
     }
 
+    // Destructor
     ~HashTable() {
         delete[] table;
     }
 
+    // Inserción
     void insert(std::string key, V value) override {
         int pos = h(key);
         TableEntry<V> entry(key, value);
@@ -47,6 +51,7 @@ public:
         n++;
     }
 
+    // Búsqueda
     V search(std::string key) override {
         int pos = h(key);
         TableEntry<V> entry(key);
@@ -59,6 +64,7 @@ public:
         return table[pos].get(found).value;
     }
 
+    // Eliminación
     V remove(std::string key) override {
         int pos = h(key);
         TableEntry<V> entry(key);
@@ -74,18 +80,39 @@ public:
         return value;
     }
 
+    // Número de entradas
     int entries() override {
         return n;
     }
 
-    int capacity() {
+    // Capacidad
+    int capacity() const {
         return max;
     }
 
+    // Operador []
     V operator[](std::string key) {
         return search(key);
     }
 
+    // ---------- MÉTODO PEDIDO EN EL ENUNCIADO ----------
+    HashTable<V> rehash() {
+        // Nueva tabla con el doble de capacidad
+        HashTable<V> newTable(2 * max);
+
+        // Reinsertar todos los elementos
+        for (int i = 0; i < max; i++) {
+            for (int j = 0; j < table[i].size(); j++) {
+                TableEntry<V> entry = table[i].get(j);
+                newTable.insert(entry.key, entry.value);
+            }
+        }
+
+        return newTable;
+    }
+    // ---------------------------------------------------
+
+    // Impresión
     friend std::ostream& operator<<(std::ostream& out, const HashTable<V>& th) {
         for (int i = 0; i < th.max; i++) {
             out << i << ": " << th.table[i] << std::endl;
