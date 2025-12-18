@@ -95,7 +95,7 @@ public:
         return search(key);
     }
 
-    // ---------- MÉTODO PEDIDO EN EL ENUNCIADO ----------
+    // Enunciado
     HashTable<V> rehash() {
         // Nueva tabla con el doble de capacidad
         HashTable<V> newTable(2 * max);
@@ -110,7 +110,6 @@ public:
 
         return newTable;
     }
-    // ---------------------------------------------------
 
     // Impresión
     friend std::ostream& operator<<(std::ostream& out, const HashTable<V>& th) {
